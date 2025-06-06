@@ -7,7 +7,7 @@ import routes from './routes';
 import corsMiddleware from './app/middlewares/cors.middleware';
 dotenv.config();
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 8080;
 async function connect() {
     await database.connect();
     //dung lượng tối đa mà client có thể submit lên server
@@ -29,7 +29,7 @@ async function connect() {
     app.use(cookieParser());
 
     app.use(corsMiddleware);
-    
+
     app.use((req: Request, res: Response, next: NextFunction): any => {
         console.log(`${req.method} ${req.url}`);
         console.log('Request Headers:', req.headers);
