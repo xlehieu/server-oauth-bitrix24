@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 
 const SALT_BCRYPT = bcrypt.genSaltSync(10);
 
-export const authInstall = async (req: Request): Promise<any> => {
+export const installBitrix = async (req: Request): Promise<any> => {
     try {
         //AUTH_ID là access_token
         //REFRESH_ID là refresh_token
@@ -198,9 +198,9 @@ const checkValidEmail = (email: string): boolean => {
 };
 export const register = async (req: Request): Promise<any> => {
     try {
-        const { email, password, confirmPassword, name } = req.body;
+        const { email, password, confirmPassword } = req.body;
 
-        if (!email || !password || !confirmPassword || !name) {
+        if (!email || !password || !confirmPassword) {
             throw {
                 status: 400,
                 message: 'Missing required fields',
@@ -230,7 +230,6 @@ export const register = async (req: Request): Promise<any> => {
         const newUser = new UserModel({
             email,
             password: hash,
-            name,
         });
 
         await newUser.save();
@@ -240,11 +239,8 @@ export const register = async (req: Request): Promise<any> => {
             message: 'User registered successfully',
         };
     } catch (error) {
-        console.error('Error in register:', error);
-        throw {
-            status: 500,
-            message: 'Internal Server Error',
-        };
+        console.error('Error in register service:', error);
+        throw error;
     }
 };
 export const login = async (req: Request): Promise<any> => {
@@ -280,7 +276,7 @@ export const login = async (req: Request): Promise<any> => {
         const access_token: string = JWTService.generalToken({
             id: user!.id,
         });
-        return {
+        const responseData = {
             status: 200,
             message: 'Login successful',
             user: {
@@ -288,11 +284,10 @@ export const login = async (req: Request): Promise<any> => {
                 access_token,
             },
         };
+        console.log('INFORMATION USER RETURN: ', responseData);
+        return responseData;
     } catch (error) {
         console.error('Error in login:', error);
-        throw {
-            status: 500,
-            message: 'Internal Server Error',
-        };
+        throw error;
     }
 };

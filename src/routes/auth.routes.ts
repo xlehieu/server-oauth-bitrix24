@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const authRouter = Router();
-authRouter.post('/install', AuthController.authInstall);
-
+authRouter.post('/install', AuthController.installBitrix);
+authRouter.post('/login', AuthController.login);
+authRouter.post('/register', AuthController.register);
 export default authRouter;
