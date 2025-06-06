@@ -5,13 +5,13 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import routes from './routes';
 import corsMiddleware from './app/middlewares/cors.middleware';
+import bodyParser from 'body-parser';
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 8080;
 async function connect() {
     await database.connect();
     //dung lượng tối đa mà client có thể submit lên server
-    app.use(express.urlencoded({ extended: true, limit: '30mb' }));
 
     //session là cái để mình kiểm soát được trạng thái của người dùng
     app.use(
@@ -25,7 +25,7 @@ async function connect() {
 
     app.set('timeout', 50000);
     app.use(express.json({ limit: '30mb' })); // Xử lý application/json
-    app.use(express.urlencoded({ extended: true })); // Xử lý application/x-www-form-urlencoded
+    app.use(express.urlencoded({ extended: true, limit: '30mb' })); // Xử lý application/x-www-form-urlencoded
     app.use(cookieParser());
 
     app.use(corsMiddleware);
