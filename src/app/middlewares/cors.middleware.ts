@@ -5,10 +5,14 @@ dotenv.config();
 export default function corsMiddleware(req: Request, res: Response, next: NextFunction): any {
     // if (!req.headers.origin || !(req.headers.origin == process.env.ALLOW_ORIGIN))
     //     return res.status(404).json({ message: 'No origin' });
+    //DOMAIN BITRIX DOMAIN=xuanhieu.bitrix24.vn
     const allowedOrigins = (process.env.ALLOWED_ORIGINS || '').split(',').map((origin) => origin.trim());
     const requestOrigin = req.headers.origin;
 
     if (requestOrigin && allowedOrigins.includes(requestOrigin)) {
+        res.setHeader('Access-Control-Allow-Origin', requestOrigin);
+    } else if (requestOrigin?.includes('bitrix24')) {
+        //check requestOrigin có chứa bitrix24 hay không
         res.setHeader('Access-Control-Allow-Origin', requestOrigin);
     }
     res.setHeader('Vary', 'Origin'); // Giúp trình duyệt xử lý cache CORS đúng cách
