@@ -24,8 +24,8 @@ async function connect() {
     );
 
     app.set('timeout', 50000);
-    app.use(express.json({ limit: '30mb' }));
-    // app.use(bodyParser.json());
+    app.use(express.json({ limit: '30mb' })); // Xử lý application/json
+    app.use(express.urlencoded({ extended: true })); // Xử lý application/x-www-form-urlencoded
     app.use(cookieParser());
 
     app.use(corsMiddleware);
