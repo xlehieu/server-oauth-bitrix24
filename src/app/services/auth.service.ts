@@ -3,6 +3,7 @@ import UserModel, { IUser } from '../models/user';
 import * as JWTService from './jwt.service';
 import axios from 'axios';
 import bcrypt from 'bcryptjs';
+import UserBitrixModel, { IUserBitrix } from '../models/userBitrix';
 
 const SALT_BCRYPT = bcrypt.genSaltSync(10);
 
@@ -28,7 +29,7 @@ export const installBitrix = async (req: Request): Promise<any> => {
             expires_in: parseInt(AUTH_EXPIRES, 10),
             obtained_at: Math.floor(Date.now() / 1000),
         };
-        await saveToken({
+        await saveTokenBitrix({
             member_id,
             domain: DOMAIN,
             tokenData,
@@ -46,13 +47,13 @@ export const installBitrix = async (req: Request): Promise<any> => {
     }
 };
 
-const saveToken = async ({ member_id, domain, tokenData }: { member_id: string; domain: string; tokenData: any }) => {
+const saveTokenBitrix = async ({ member_id, domain, tokenData }: { member_id: string; domain: string; tokenData: any }) => {
     try {
-        let user = await UserModel.findOne({ member_id, domain });
+        let user = await UserBitrixModel.findOne({ member_id, domain });
         console.log('USER BITRIX 24: ', user);
         // member_id là id của user đặt làm field khóa luôn
         if (!user) {
-            user = new UserModel({
+            user = new UserBitrixModel({
                 member_id,
                 domain,
                 ...tokenData,
@@ -71,7 +72,7 @@ const saveToken = async ({ member_id, domain, tokenData }: { member_id: string; 
     }
 };
 const getTokenBitrix24 = async (key: string) => {
-    const user = await UserModel.findOne({ member_id: key });
+    const user = await UserBitrixModel.findOne({ member_id: key });
     if (!user) {
         throw new Error('Token not found');
     }
@@ -97,7 +98,7 @@ const getValidTokenBitrix24 = async (key: string, domain: string, member_id: str
     console.log('RES OAUTH BITRIX TOKEN REFRESH: ', res.data);
     const newToken = await res.data;
 
-    await saveToken({
+    await saveTokenBitrix({
         member_id,
         domain,
         tokenData: {
@@ -111,7 +112,7 @@ const getValidTokenBitrix24 = async (key: string, domain: string, member_id: str
     return newToken.access_token;
 };
 export const callBitrixAPI = async ({ userId, action, payload = {} }: any): Promise<any> => {
-    const user: IUser | null = await UserModel.findOne({ member_id: userId });
+    const user: IUserBitrix | null = await UserBitrixModel.findOne({ member_id: userId });
 
     if (!user || !user.access_token || !user.domain) {
         throw new Error('User chưa kết nối Bitrix');
