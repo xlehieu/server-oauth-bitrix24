@@ -34,7 +34,7 @@ export const authInstall = async (req: Request): Promise<any> => {
             tokenData,
         });
         // Redirect hoặc trả về iframe content cho frontend
-        const frontendUrl = `https://${process.env.FRONTEND_URL}/bitrix?DOMAIN=${DOMAIN}&APP_SID=${APP_SID}`;
+        const frontendUrl = `${process.env.FRONTEND_URL}/bitrix?DOMAIN=${DOMAIN}&APP_SID=${APP_SID}`;
         console.log(`Redirecting to frontend URL: ${frontendUrl}`);
         return {
             status: 302,
