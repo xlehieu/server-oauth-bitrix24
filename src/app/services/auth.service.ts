@@ -47,21 +47,29 @@ export const installBitrix = async (req: Request): Promise<any> => {
 };
 
 const saveToken = async ({ member_id, domain, tokenData }: { member_id: string; domain: string; tokenData: any }) => {
-    let user = await UserModel.findOne({ member_id, domain });
-    // member_id là id của user đặt làm field khóa luôn
-    if (!user) {
-        user = new UserModel({
-            member_id,
-            domain,
-            ...tokenData,
-        });
-    } else {
-        Object.assign(user, tokenData);
+    try {
+        let user = await UserModel.findOne({ member_id, domain });
+        console.log('USER BITRIX 24: ', user);
+        // member_id là id của user đặt làm field khóa luôn
+        if (!user) {
+            user = new UserModel({
+                member_id,
+                domain,
+                ...tokenData,
+            });
+        } else {
+            Object.assign(user, tokenData);
+        }
+        await user.save();
+        return user;
+    } catch (error) {
+        console.error('Error saving token:', error);
+        throw {
+            status: 500,
+            message: 'Failed to save token',
+        };
     }
-    await user.save();
-    return user;
 };
-
 const getTokenBitrix24 = async (key: string) => {
     const user = await UserModel.findOne({ member_id: key });
     if (!user) {
