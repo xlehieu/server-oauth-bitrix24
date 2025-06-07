@@ -6,7 +6,11 @@ export const verifyToken = (req: any, res: any, next: any): void => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as jwt.JwtPayload & { member_id: string; domain: string };
+        console.log('Decoded token verify:', decoded); // Log decoded token for debugging
+        if (!decoded.member_id || !decoded.domain) {
+            return res.status(401).json({ message: 'Invalid token' });
+        }
         req.user_info = decoded; // Attach user info to request object
         next();
     } catch (error) {

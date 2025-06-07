@@ -14,7 +14,7 @@ export const anyApiOAuthBitrix = async ({
     try {
         payload.auth = access_token;
         const url = `https://${domain}/rest/${action}.json`;
-        const response = await axiosCf().post(url, payload);
+        const response = await axiosCf.post(url, payload);
         return response.data;
     } catch (error: any) {
         console.error('Lỗi khi gọi API Bitrix:', error.response?.data || error.message);
