@@ -76,7 +76,8 @@ export const getTokenBitrix = async (member_id: string) => {
         const expired = now > user.obtained_at + user.expires_in - 60;
 
         if (!expired) return user.access_token;
-
+        console.error('client_id', process.env.BITRIX_CLIENT_ID!);
+        console.error('client_sceret', process.env.BITRIX_CLIENT_SECRET!);
         const res = await axios.post(
             'https://oauth.bitrix.info/oauth/token',
             new URLSearchParams({
@@ -87,13 +88,14 @@ export const getTokenBitrix = async (member_id: string) => {
             }),
         );
         console.log('RES OAUTH BITRIX TOKEN REFRESH: ', res.data);
-        const newToken = await res.data;
+        const newToken = res.data;
 
         user = {
             ...user,
             ...newToken,
             obtained_at: Math.floor(Date.now() / 1000),
         };
+        console.warn('USER BITRIX 24: ', user);
         await user!.save();
 
         return newToken.access_token;
