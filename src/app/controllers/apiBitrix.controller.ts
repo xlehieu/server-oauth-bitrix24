@@ -6,6 +6,7 @@ export const callApiAnyBitrix = async (req: Request, res: Response): Promise<any
         const { action, payload } = req.body;
         if (!action || !payload) throw { status: 400, message: 'Missing required fields' };
         const userInfo = req.user_info;
+        console.error('=>>>>>userInfo', userInfo);
         const userBitrix = await AuthBitrix.getUserBitrixByMemberId(userInfo.member_id);
         const result = await ApiBitrix.anyApiOAuthBitrix({
             domain: userInfo.domain,
@@ -13,6 +14,7 @@ export const callApiAnyBitrix = async (req: Request, res: Response): Promise<any
             payload,
             access_token: userBitrix.access_token,
         });
+        console.log(`====> DATA API ${action} :`, result);
         return res.status(200).json(result);
     } catch (error: any) {
         console.error('Error in callApiAnyBitrix:', error);
