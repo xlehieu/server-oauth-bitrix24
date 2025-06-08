@@ -7,6 +7,7 @@ export const getAccessTokenBE = async (req: Request) => {
     try {
         const { member_id } = req.query;
         const user = await UserModel.findOne({ member_id });
+        console.log('user', user);
         if (!user) {
             throw {
                 status: 404,
@@ -15,7 +16,7 @@ export const getAccessTokenBE = async (req: Request) => {
         }
         // dùng tạm cách này để lấy access_token do backend cấp
         // mỗi khi người dùng mở app Bitrix24 thì sẽ gọi API này để cấp lại access_token
-        const access_token = JWTService.generalToken({ member_id: user.member_id, domain: user.domain });
+        const access_token = JWTService.generalToken({ member_id: member_id, domain: user.domain });
         console.log('ACCESS TOKEN BE: ', access_token);
         return access_token;
     } catch (error) {

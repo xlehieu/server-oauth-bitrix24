@@ -11,3 +11,11 @@
 # login cấp access_token
 
 -   FE lưu vào localStorage
+
+# FE => gọi api backend => gọi api Bitrix
+
+-   BE check access_token của FE gửi
+    -- lấy member_id, action, payload
+    --- gọi api Bitrix
+
+## fix bitrix post install được vercel lại không - call api ok

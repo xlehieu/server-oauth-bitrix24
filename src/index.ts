@@ -14,29 +14,28 @@ async function connect() {
     //dung lượng tối đa mà client có thể submit lên server
 
     //session là cái để mình kiểm soát được trạng thái của người dùng
-    app.use(
-        session({
-            secret: String(process.env.SESSION_SECRET),
-            resave: false,
-            saveUninitialized: true,
-            cookie: { maxAge: 24 * 60 * 60 * 1000, httpOnly: true, secure: true }, // 10 minutes
-        }),
-    );
+    // app.use(
+    //     session({
+    //         secret: String(process.env.SESSION_SECRET),
+    //         resave: false,
+    //         saveUninitialized: true,
+    //         cookie: { maxAge: 24 * 60 * 60 * 1000, httpOnly: true, secure: true }, // 10 minutes
+    //     }),
+    // );
 
     app.set('timeout', 50000);
     app.use(express.json({ limit: '30mb' })); // Xử lý application/json
     app.use(express.urlencoded({ extended: true, limit: '30mb' })); // Xử lý application/x-www-form-urlencoded
     app.use(cookieParser());
 
-    app.use(corsMiddleware);
-
     app.use((req: Request, res: Response, next: NextFunction): any => {
-        console.log(`${req.method} ${req.url}`);
+        console.log(`${req.method} ======= ${req.url}`);
         console.log('Request Headers:', req.headers);
         console.log('Request Body:', req.body);
         console.log('Request Query:', req.query);
         next();
     });
+    app.use(corsMiddleware);
     routes(app);
     // Middleware xử lý lỗi
     app.use((err: any, req: Request, res: Response, next: NextFunction): any => {
