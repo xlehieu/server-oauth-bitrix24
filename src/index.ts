@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import * as database from './db/mongodb';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
@@ -29,13 +30,14 @@ async function connect() {
     app.use(cookieParser());
 
     app.use((req: Request, res: Response, next: NextFunction): any => {
-        console.log(`${req.method} ======= ${req.url}`);
+        console.log(`${req.method} <<<<=======>>>>> ${req.url}`);
         console.log('Request Headers:', req.headers);
         console.log('Request Body:', req.body);
         console.log('Request Query:', req.query);
         next();
     });
-    app.use(corsMiddleware);
+    // app.use(cors());
+    app.use(corsMiddleware); // sử dụng khi không dùng ngrok vì ngrok sẽ tự trả về access-control-allow-origin: *
     routes(app);
     // Middleware xử lý lỗi
     app.use((err: any, req: Request, res: Response, next: NextFunction): any => {

@@ -5,12 +5,12 @@ dotenv.config();
 
 export const generalToken = (payload: any): string => {
     const token = jwt.sign({ ...payload }, process.env.JWT_SECRET as any, { expiresIn: '24h' });
-    return 'Bearer ' + token;
+    return token;
 };
 
 export const refreshToken = (payload: any): string => {
     const token = jwt.sign({ ...payload }, process.env.JWT_SECRET as any, { expiresIn: '365d' });
-    return 'Bearer ' + token;
+    return token;
 };
 
 export const verifyToken = (token: string): any => {

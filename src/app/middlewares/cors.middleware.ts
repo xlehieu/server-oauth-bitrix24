@@ -9,11 +9,6 @@ export default function corsMiddleware(req: Request, res: Response, next: NextFu
     const allowedOrigins = (process.env.ALLOWED_ORIGINS || '').split(',').map((origin) => origin.trim());
     const requestOrigin = req.headers.origin;
     console.log('=>>>>>>>>>>>>>>>>>Origin:', requestOrigin);
-
-    console.warn(
-        "requestOrigin && (allowedOrigins.includes(requestOrigin) || requestOrigin.includes('bitrix24'))",
-        requestOrigin && (allowedOrigins.includes(requestOrigin) || requestOrigin.includes('bitrix24')),
-    );
     // Luôn cần kiểm tra nếu có origin
     if (requestOrigin && (allowedOrigins.includes(requestOrigin) || requestOrigin.includes('bitrix24'))) {
         res.setHeader('Access-Control-Allow-Origin', requestOrigin);
