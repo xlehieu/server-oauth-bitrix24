@@ -63,41 +63,45 @@ const saveTokenBitrix = async ({ member_id, domain, tokenData }: { member_id: st
     }
 };
 export const getTokenBitrix = async (member_id: string) => {
-    let user = await UserModel.findOne({ member_id });
-    if (!user) {
-        throw {
-            status: 404,
-            message: 'User not found',
+    try {
+        let user = await UserModel.findOne({ member_id });
+        if (!user) {
+            throw {
+                status: 404,
+                message: 'User not found',
+            };
+        }
+
+        const now = Math.floor(Date.now() / 1000);
+        const expired = now > user.obtained_at + user.expires_in - 60;
+
+        if (!expired) return user.access_token;
+
+        const res = await axios.post(
+            'https://oauth.bitrix.info/oauth/token',
+            new URLSearchParams({
+                grant_type: 'refresh_token',
+                client_id: process.env.BITRIX_CLIENT_ID!,
+                client_secret: process.env.BITRIX_CLIENT_SECRET!,
+                refresh_token: user.refresh_token,
+            }),
+        );
+        console.log('RES OAUTH BITRIX TOKEN REFRESH: ', res.data);
+        const newToken = await res.data;
+
+        user = {
+            ...user,
+            ...newToken,
+            obtained_at: Math.floor(Date.now() / 1000),
         };
+        await user!.save();
+
+        return newToken.access_token;
+    } catch (err) {
+        console.error('Error getTokenBitrix:', err);
+        throw err;
     }
-
-    const now = Math.floor(Date.now() / 1000);
-    const expired = now > user.obtained_at + user.expires_in - 60;
-
-    if (!expired) return user.access_token;
-
-    const res = await axios.post(
-        'https://oauth.bitrix.info/oauth/token',
-        new URLSearchParams({
-            grant_type: 'refresh_token',
-            client_id: process.env.BITRIX_CLIENT_ID!,
-            client_secret: process.env.BITRIX_CLIENT_SECRET!,
-            refresh_token: user.refresh_token,
-        }),
-    );
-    console.log('RES OAUTH BITRIX TOKEN REFRESH: ', res.data);
-    const newToken = await res.data;
-
-    user = {
-        ...user,
-        ...newToken,
-        obtained_at: Math.floor(Date.now() / 1000),
-    };
-    await user!.save();
-
-    return newToken.access_token;
 };
-
 export const getUserBitrixByMemberId = async (member_id: string) => {
     try {
         if (!member_id)

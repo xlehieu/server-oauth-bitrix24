@@ -1,16 +1,18 @@
 import axiosCf from '../../config/axios.config';
-
+import * as AuthBitrix from './authBitrix.service';
 export const anyApiOAuthBitrix = async ({
     domain,
     action,
     payload,
     access_token,
+    member_id,
 }: {
     access_token: string;
     domain: string;
     action: string;
     payload: any;
-}) => {
+    member_id?: string;
+}): Promise<any> => {
     try {
         payload.auth = access_token;
         const url = `https://${domain}/rest/${action}.json`;
@@ -18,7 +20,17 @@ export const anyApiOAuthBitrix = async ({
         return response.data;
     } catch (error: any) {
         console.error('Lỗi khi gọi API Bitrix:', error.response?.data || error.message);
-        return null;
+        if (error.response?.data?.error === 'expired_token') {
+            const newToken = await AuthBitrix.getTokenBitrix(member_id || '');
+            return await anyApiOAuthBitrix({
+                domain,
+                action,
+                payload,
+                access_token: newToken,
+                member_id,
+            });
+        }
+        throw error;
     }
 };
 // curl -X POST \
