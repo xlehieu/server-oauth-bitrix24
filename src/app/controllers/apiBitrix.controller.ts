@@ -13,6 +13,7 @@ export const callApiAnyBitrix = async (req: Request, res: Response): Promise<any
             action,
             payload,
             access_token: userBitrix.access_token,
+            member_id: userInfo.member_id,
         });
         console.log(`====> DATA API ${action} :`, result);
         return res.status(200).json(result);
