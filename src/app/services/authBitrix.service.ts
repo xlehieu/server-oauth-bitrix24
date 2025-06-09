@@ -78,25 +78,29 @@ export const getTokenBitrix = async (member_id: string) => {
         if (!expired) return user.access_token;
         console.error('client_id', process.env.BITRIX_CLIENT_ID!);
         console.error('client_sceret', process.env.BITRIX_CLIENT_SECRET!);
-        const res = await axios.post(
-            'https://oauth.bitrix.info/oauth/token',
-            new URLSearchParams({
+        //https://oauth.bitrix.info/oauth/token/?grant_type=refresh_token&client_id=local.6840f32c4595b6.11637008&client_secret=RWwFsClBMjCBns7r63TPu9Pl6o4yRncrv7Ef3W0XothoPqcNpa&refresh_token=eeea6d6800792fa3007927a500000001403807539ca4ccde9f8852a044f00c591e56cd
+        const res = await axios.get('https://oauth.bitrix.info/oauth/token', {
+            params: {
                 grant_type: 'refresh_token',
                 client_id: process.env.BITRIX_CLIENT_ID!,
                 client_secret: process.env.BITRIX_CLIENT_SECRET!,
                 refresh_token: user.refresh_token,
-            }),
-        );
+            },
+        });
         console.log('RES OAUTH BITRIX TOKEN REFRESH: ', res.data);
         const newToken = res.data;
 
-        user = {
-            ...user,
-            ...newToken,
-            obtained_at: Math.floor(Date.now() / 1000),
-        };
+        // user = {
+        //     ...user,
+        //     refresh_token: newToken.refresh_token,
+        //     access_token: newToken.access_token,
+        //     obtained_at: Math.floor(Date.now() / 1000),
+        // };
+        user.refresh_token = newToken.refresh_token;
+        user.access_token = newToken.access_token;
+        user.obtained_at = Math.floor(Date.now() / 1000);
         console.warn('USER BITRIX 24: ', user);
-        await user!.save();
+        await user.save();
 
         return newToken.access_token;
     } catch (err) {

@@ -4,9 +4,11 @@ import * as AuthBitrix from '../services/authBitrix.service';
 export const callApiAnyBitrix = async (req: Request, res: Response): Promise<any> => {
     try {
         const { action, payload } = req.body;
+        console.log('=>>>>>action', action);
+        console.log('=>>>>>payload', payload);
         if (!action || !payload) throw { status: 400, message: 'Missing required fields' };
         const userInfo = req.user_info;
-        console.error('=>>>>>userInfo', userInfo);
+        console.log('=>>>>>userInfo', userInfo);
         const access_token_Bitrix = await AuthBitrix.getTokenBitrix(userInfo.member_id);
         const result = await ApiBitrix.anyApiOAuthBitrix({
             domain: userInfo.domain,
