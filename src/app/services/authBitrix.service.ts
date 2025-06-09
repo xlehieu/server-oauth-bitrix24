@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import axios from 'axios';
-import UserModel, { IUser } from '../models/user';
+import UserModel from '../models/user';
 export const installBitrix = async (req: Request): Promise<any> => {
     try {
         //AUTH_ID là access_token
