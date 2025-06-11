@@ -29,7 +29,7 @@ export const installBitrix = async (req: Request): Promise<any> => {
             tokenData,
         });
         // Redirect hoặc trả về iframe content cho frontend
-        const frontendUrl = `${process.env.FRONTEND_URL}/bitrix/auth?member_id=${member_id}`;
+        const frontendUrl = `${process.env.DEVELOPMENT ? 'http://localhost:3000' : process.env.FRONTEND_URL}/bitrix/auth?member_id=${member_id}`;
         console.log(`Redirecting to frontend URL: ${frontendUrl}`);
         return frontendUrl;
     } catch (error) {
